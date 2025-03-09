@@ -1,27 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Register</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/./CSS/style.css">
+    <title>Cadastro</title>
 </head>
 <body>
-  <div>
+    <h2>Formulário de Cadastro</h2>
     <form action="register.php" method="POST">
-      <div>
-        <label>Nome:</label>
-        <input type="text" name="name" required>
-      </div>
-      <div>
-        <label>Username:</label>
-        <input type="text" name="username" required>
-      </div>
-      <div>
-        <label>Senha:</label>
-        <input type="password" name="password" required>
-      </div>
-      <button type=submit"">Cadastrar</button>
+        <label for="username">Nome de Usuário:</label>
+        <input type="text" name="username" required><br><br>
+
+        <label for="email">Email:</label>
+        <input type="email" name="email" required><br><br>
+
+        <label for="password">Senha:</label>
+        <input type="password" name="password" required><br><br>
+
+        <button type="submit">Cadastrar</button>
     </form>
-  </div>
 </body>
 </html>

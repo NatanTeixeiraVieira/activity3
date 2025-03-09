@@ -1,31 +1,26 @@
 <?php
 
-class Register {
+class User {
     private $id;
-    private $name;
     private $username;
     private $password;
+    private $email;
 
-    public function __construct($name, $username, $password) {
-        $this->setName($name);
-        $this->setUsername($username);
-        $this->setPassword($password);
+    // Construtor
+    public function __construct($username = null, $password = null, $email = null) {
+        $this->generateId();
+        $this->username = $username;
+        $this->password = $password ? password_hash($password, PASSWORD_DEFAULT) : null;
+        $this->email = $email;
     }
 
-    // Setter e Getter para Name
-    public function getName() {
-        return $this->name;
+    // Getters e Setters
+    public function getId() {
+        return $this->id;
     }
 
-    public function setName($name) {
-        if (!empty($name) && is_string($name) && strlen($name) > 2) {
-            if (!preg_match('/^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/', $name)) {
-                throw new Exception("Nome inválido. Apenas letras e espaços são permitidos.");
-            }
-            $this->name = $name;
-        } else {
-            throw new Exception("Nome inválido. Deve ter pelo menos 3 caracteres.");
-        }
+    public function setId($id) {
+        $this->id = $id;
     }
 
     public function getUsername() {
@@ -33,74 +28,84 @@ class Register {
     }
 
     public function setUsername($username) {
-        if (!empty($username) && preg_match('/^[a-zA-Z0-9_]+$/', $username)) {
-            $this->username = $username;
-        } else {
-            throw new Exception("Username de usuário inválido. Apenas letras, números e underscore são permitidos.");
-        }
+        $this->username = $username;
+    }
+
+    public function getPassword() {
+        return $this->password;
     }
 
     public function setPassword($password) {
-        if (strlen($password) >= 6) {
-            $this->password = password_hash($password, PASSWORD_DEFAULT);
-        } else {
-            throw new Exception("A senha deve ter pelo menos 6 caracteres.");
-        }
+        $this->password = password_hash($password, PASSWORD_DEFAULT);
     }
 
-    private function generateId() {
-        $file = "users.txt";
-
-        if (!file_exists($file)) {
-            return 1;
-        }
-
-        $lines = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        if (empty($lines)) {
-            return 1;
-        }
-
-        $lastLine = end($lines);
-        $data = explode(";", $lastLine);
-        return (int)$data[0] + 1;
+    public function getEmail() {
+        return $this->email;
     }
 
-    public function saveUser() {
-        $file = "users.txt";
-        $this->id = $this->generateId();
-
-        $data = "{$this->id};{$this->name};{$this->username};{$this->password}\n";
-        file_put_contents($file, $data, FILE_APPEND); // Adiciona os dados ao arquivo
-
-        echo "Usuário salvo com sucesso! ID: {$this->id}\n";
+    public function setEmail($email) {
+        $this->email = $email;
     }
 
+    // Método para gerar ID único
+    public function generateId() {
+        $this->id = uniqid();
+    }
+
+    // Método para cadastro de usuário
+    public function register() {
+        // Criar um array com os dados do usuário
+        $userData = [
+            'id' => $this->id,
+            'username' => $this->username,
+            'password' => $this->password,
+            'email' => $this->email
+        ];
+
+        // Carregar o arquivo JSON existente, ou criar um array vazio
+        $users = file_exists('users.json') ? json_decode(file_get_contents('users.json'), true) : [];
+
+        // Adicionar novo usuário ao array
+        $users[] = $userData;
+
+        // Salvar o array atualizado no arquivo JSON
+        file_put_contents('users.json', json_encode($users, JSON_PRETTY_PRINT));
+
+        return true;
+    }
+
+    // Método de login
     public function login($username, $password) {
-        $file =  __DIR__."/../cadastro/users.txt";
+        // Caminho para o arquivo users.json
+        $path = __DIR__ . '/../cadatro/users.json';
 
-        if(!file_exists($file)){
-            throw new Exception("Arquivo não encontrado");
+        // Verifica se o arquivo existe
+        if (!file_exists($path)) {
+            echo "Arquivo users.json não encontrado.";
+            return false; // Se o arquivo não existir, não há usuários
         }
 
-        // Lê o conteúdo do arquivo e retorna um array onde cada linha é um elemento.
-        // FILE_IGNORE_NEW_LINES → Remove quebras de linha (\n)
-        // FILE_SKIP_EMPTY_LINES → Ignora linhas vazias.
-        $lines = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        // Carrega os usuários armazenados
+        $users = json_decode(file_get_contents($path), true);
 
-        foreach($lines as $line) {
-            list($id, $name, $storedUsername, $hashPassword) = explode(';', $line);
+        // Verifica se houve erro ao carregar o JSON
+        if ($users === null) {
+            echo "Erro ao ler o arquivo JSON.";
+            return false;
+        }
 
-          // verifica se o username é o mesmo
-          if($storedUsername == $username){
-            //verifica se a senha corresponde a senha armazenada
-            if(password_verify($password, $hashPassword)){
-                echo "Login bem sucedido!";
-                return true;
-            } else {
-                throw new Exception("Senha incorreta.");
+        // Procura pelo usuário e verifica a senha
+        foreach ($users as $user) {
+            // Verifica se o username corresponde
+            if ($user['username'] === $username) {
+                // Verifica se a senha fornecida corresponde à senha armazenada
+                if (password_verify($password, $user['password'])) {
+                    return true; // Sucesso no login
+                }
             }
-          }  
         }
-        thro new Exception("Usuário não encontrado")
+
+        // Se o username ou senha estiver incorreto
+        return false;
     }
 }
