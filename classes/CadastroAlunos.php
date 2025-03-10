@@ -1,7 +1,7 @@
 <?php
 
 class CadastroAlunos {
-    private string $arquivo = "alunos.json";
+    private string $arquivo = "../cadastroAluno/alunos.json";
 
     public function cadastrarAluno(Aluno $aluno): void {
         $dados = $this->lerArquivo();
@@ -25,10 +25,10 @@ class CadastroAlunos {
         }
 
         foreach ($dados as $aluno) {
-            echo "Nome: " . $aluno['nome'] . "\n";
-            echo "Matrícula: " . $aluno['matricula'] . "\n";
-            echo "Curso: " . $aluno['curso'] . "\n";
-            echo "-------------------------\n";
+            echo "Nome: " . $aluno['nome'] . "; ";
+            echo "Matrícula: " . $aluno['matricula'] . "; ";
+            echo "Curso: " . $aluno['curso'] . "; ";
+            echo "<br>";
         }
     }
 
