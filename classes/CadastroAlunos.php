@@ -1,19 +1,36 @@
 <?php
 
 class CadastroAlunos {
-    private string $arquivo = "../cadastroAluno/alunos.json";
+    private string $arquivo;
+
+    public function __construct(string $file = "../cadastroAluno/alunos.json") {
+        $this->arquivo = $file;
+    }
 
     public function cadastrarAluno(Aluno $aluno): void {
         $dados = $this->lerArquivo();
 
-        $dados[] = [
-            "nome" => $aluno->getNome(),
-            "matricula" => $aluno->getMatricula(),
-            "curso" => $aluno->getCurso()
-        ];
+        $matriculaNova = $aluno->getMatricula();
+        $existe = false;
 
-        file_put_contents($this->arquivo, json_encode($dados, JSON_PRETTY_PRINT));
-        echo "Aluno cadastrado com sucesso!\n";
+        foreach ($dados as $item) {
+            if ($item["matricula"] === $matriculaNova) {
+                $existe = true;
+                break; 
+            }
+        }
+
+        if (!$existe) {
+            $dados[] = [
+                "nome" => $aluno->getNome(),
+                "matricula" => $matriculaNova,
+                "curso" => $aluno->getCurso()
+            ];
+            file_put_contents($this->arquivo, json_encode($dados, JSON_PRETTY_PRINT));
+            echo "Aluno cadastrado com sucesso!\n";
+        } else {
+            echo "Matrícula já cadastrada!";
+        }
     }
 
     public function listarAlunos(): void {
