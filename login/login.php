@@ -8,7 +8,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = new User();
 
     if ($user->login($username, $password)) {
-        echo "Login realizado com sucesso!";
+        echo "
+            <script>
+                sessionStorage.setItem('user', '" . addslashes($username) . "');
+                alert('Login Realizado com sucesso')
+                window.location.href = '/activity3/';
+            </script>
+        ";
     } else {
         echo "Nome de usuário ou senha inválidos.";
     }

@@ -9,7 +9,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = new User($username, $password, $email);
 
     if ($user->register()) {
-        echo "Usuário cadastrado com sucesso!";
+        echo "
+            <script>
+                alert('Usuário cadastrado com sucesso.');
+                window.location.href='/activity3/login';
+            </script>
+        ";
     } else {
         echo "Erro ao cadastrar usuário.";
     }

@@ -17,13 +17,15 @@
   </ul>
 </nav>
 
-<h2>Listagem</h2>
-  <?php
-    require "./classes/CadastroAlunos.php";
+  <div class="listing">
+    <h2>Listagem</h2>
+    <?php
+      require "./classes/CadastroAlunos.php";
 
-    $registerStudents = new CadastroAlunos("./cadastroAluno/alunos.json");
-    $registerStudents->listarAlunos();
-    ?>
+      $registerStudents = new CadastroAlunos("./cadastroAluno/alunos.json");
+      $registerStudents->listarAlunos();
+      ?>
+  </div>
 </nav>
 </body>
 </html>
